@@ -131,6 +131,62 @@ colores_caras.resize(n_c);
     }
 }
 
+
+void _triangulos3D::calcular_normales_caras() {
+    int n_c;
+    _vertex3f vector_a, vector_b,aux;
+
+    n_c = caras.size();
+    normales_caras.resize(n_c);
+    float modulo;
+
+    for (int i = 0; i < n_c; i++) {
+        vector_a = vertices[caras[i]._1] - vertices[caras[i]._0];
+        vector_b = vertices[caras[i]._2] - vertices[caras[i]._0];
+
+        //calculo normal
+        aux.x = vector_a.y * vector_b.z - vector_a.z * vector_b.y;
+        aux.y = vector_a.z * vector_b.x - vector_a.x * vector_b.z;
+        aux.z = vector_a.x * vector_b.y - vector_a.y * vector_b.x;
+
+        //calculo del vector en si
+        modulo = sqrt(aux.x * aux.x + aux.y * aux.y + aux.z * aux.z);
+        normales_caras[i].x = aux.x / modulo;
+        normales_caras[i].y = aux.y / modulo;
+        normales_caras[i].z = aux.z / modulo;
+    }
+}
+
+void _triangulos3D::colors_lambert_c(float l_x, float l_y, float l_z, float r, float g, float b){       // l_x, l_y, l_z determina dónde está la luz.
+
+    int n_c;
+    n_c = caras.size();
+    colores_caras.resize(n_c);
+    _vertex3f luz, aux_luz;
+    float modulo, p_escalar;
+    aux_luz.x = l_x;
+    aux_luz.y = l_y;
+    aux_luz.z = l_z;
+
+    for (int i = 0; i < n_c; i++) {
+        luz = aux_luz - vertices[caras[i]._0];
+        modulo = sqrt(luz.x * luz.x + luz.y * luz.y + luz.z * luz.z);
+
+        luz.x = luz.x / modulo;
+        luz.y = luz.y / modulo;
+        luz.z = luz.z / modulo;
+
+        p_escalar = luz.x * normales_caras[i].x + luz.y * normales_caras[i].y +
+                    luz.z * normales_caras[i].z;
+
+        if (p_escalar < 0) p_escalar = 0;
+
+        colores_caras[i].r = r * p_escalar;
+        colores_caras[i].g = g * p_escalar;
+        colores_caras[i].b = b * p_escalar;
+    }
+}
+
 //*************************************************************************
 // clase cubo
 //*************************************************************************
@@ -274,8 +330,7 @@ _piramide::_piramide(float tam, float al)
     for(int i = 0; i < 6; i++){
         colores_caras[i].r = rand()%1000/1000.0;
         colores_caras[i].g = rand()%1000/1000.0;
-        colores_caras[i].b = rand()%1000/1000.0;
-        
+        colores_caras[i].b = rand()%1000/1000.0;    
     }
 }
 
@@ -289,8 +344,6 @@ _objeto_ply::_objeto_ply()
    // leer lista de coordenadas de vértices y lista de indices de vértices
  
 }
-
-
 
 void _objeto_ply::parametros(char *archivo)
 {                                           // OBJETO TECLA "o"     
@@ -323,6 +376,14 @@ void _objeto_ply::parametros(char *archivo)
         caras[i].z = car_ply[i*3 + 2];
     }
 
+// Calcular normales.
+    calcular_normales_caras();
+
+// Colores
+
+    colors_lambert_c(0, 10, 40, 1.0, 0.8, 0);
+
+/*
 //colores caras
     colores_caras.resize(n_car);
     srand(10);
@@ -350,7 +411,7 @@ void _objeto_ply::parametros(char *archivo)
                 colores_caras[i].g = rand()%1000/1000.0;
             }
         }
-    }
+    }*/
 }
 
 
