@@ -17,9 +17,7 @@ typedef enum{POINTS,EDGES,SOLID,SOLID_COLORS} _modo;
 
 class _puntos3D
 {
-public:
-
-  
+public: 
     _puntos3D();
     void 	draw_puntos(float r, float g, float b, int grosor);
 
@@ -81,6 +79,17 @@ public:
 };
 
 //*************************************************************************
+// clase piramide examen
+//*************************************************************************
+
+class _piramideExamen: public _triangulos3D
+{
+public:
+
+	_piramideExamen(float tam=0.5, float al=1.0);
+};
+
+//*************************************************************************
 // clase objeto ply
 //*************************************************************************
 
@@ -103,7 +112,7 @@ public:
        
 // tipo 0 --> Normal, tipo 1 --> cono, tipo 2 --> esfera.  tapa_in 0/1 --> Sin tapa / Con tapa,  tapa_sup 0/1 --> Sin tapa / Con tapa.
        
-    void  parametros(vector<_vertex3f> perfil, int num, int tipo, int tapa_in, int tapa_sup);
+    void  parametros(vector<_vertex3f> perfil, int num, int tipo, int tapa_in, int tapa_su);
 };
 
 // CILINDRO.
@@ -126,8 +135,12 @@ public:
 
 class _esfera: public _rotacion{
 public:
-    _esfera(float radio, int num1, int num2);
-    
+    _esfera(float radio, int num1, int num2); 
+};
+
+class _esferaDoble: public _rotacion{
+public:
+    _esferaDoble(float radio1, float radio2, int num1, int num2); 
 };
 
 //************************************************************************

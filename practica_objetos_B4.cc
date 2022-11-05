@@ -12,7 +12,7 @@
 using namespace std;
 
 // tipos
-typedef enum{CUBO, PIRAMIDE, OBJETO_PLY, ROTACION, EXTRUSION, CILINDRO, CONO, ESFERA, ROTACION_PLY, EXCAVADORA, COCHE} _tipo_objeto;
+typedef enum{CUBO, PIRAMIDE, OBJETO_PLY, ROTACION, EXTRUSION, CILINDRO, CONO, ESFERA, ROTACION_PLY, EXCAVADORA, COCHE, PIRAMIDEXAMEN, ESFERADOBLE} _tipo_objeto;
 _tipo_objeto t_objeto=CUBO;
 _modo   modo=POINTS;
 
@@ -40,6 +40,8 @@ _esfera esfera(0.7, 8, 8);
 _rotacion_PLY objetoPLY;
 _excavadora excavadora;
 _coche coche;
+_piramideExamen piramide2(0.85,1.3);
+_esferaDoble esfera2(0.6, 0.4, 100, 100);
 
 // _objeto_ply *ply;
 
@@ -130,10 +132,10 @@ switch (t_objeto){
         case ROTACION_PLY: objetoPLY.draw(modo, 1.0, 0.0, 0.0, 5); break;
         case EXCAVADORA: excavadora.draw(modo,1.0,0.0,0.0,5);break;
         case COCHE: coche.draw(modo,1.0,0.0,0.0,5);break;
+        case PIRAMIDEXAMEN: piramide2.draw(modo,1.0,0.0,0.0,5);break;
+        case ESFERADOBLE: esfera2.draw(modo,1.0,0.0,0.0,5); break;
 	}
-
 }
-
 
 //**************************************************************************
 //
@@ -198,6 +200,8 @@ void normal_key(unsigned char Tecla1,int x,int y)
         case 'L':t_objeto=ROTACION_PLY;break;
         case 'A':t_objeto=EXCAVADORA;break;
         case 'K':t_objeto=COCHE;break;
+        case 'B':t_objeto=PIRAMIDEXAMEN;break;
+        case 'N':t_objeto=ESFERADOBLE;break;
         
         case 'S':
             if(coche.anima == true)
