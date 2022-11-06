@@ -39,6 +39,18 @@ _triangulos3D::_triangulos3D()
 {
 }
 
+void _triangulos3D::colors_random()
+{
+int i, n_c;
+n_c=caras.size();
+colores_caras.resize(n_c);
+srand (time(NULL));
+for (i=0;i<n_c;i++)  
+  {colores_caras[i].r=rand()%1000/1000.0;
+   colores_caras[i].g=rand()%1000/1000.0;
+   colores_caras[i].b=rand()%1000/1000.0;
+  }
+}
 
 //*************************************************************************
 // dibujar en modo arista
@@ -305,16 +317,16 @@ _esferaDoble::_esferaDoble(float radio1, float radio2, int num1, int num2)
     vector <_vertex3f> perfil;
     _vertex3f vert_aux;
     
-    for(int i = 1; i <= num1/2 + 1; i++){
-        vert_aux.x = radio1 + radio1*cos(M_PI*i/num1-M_PI/2.0);
+    for(int i = 0; i < num1/2 + 1; i++){
+        vert_aux.x = radio2 + radio1*cos(M_PI*i/num1-M_PI/2.0);
         vert_aux.y = radio1*sin(M_PI*i/num1-M_PI/2.0);
         vert_aux.z = 0.0;
         perfil.push_back(vert_aux);
     }
 
-    for(int i = 1; i < num1; i++){
+    for(int i = num1/2; i < num1; i++){
         vert_aux.x = radio2*cos(M_PI*i/num1-M_PI/2.0);
-        vert_aux.y = -radio2 - radio2*sin(M_PI*i/num1-M_PI/2.0);
+        vert_aux.y = -radio1 - radio2*sin(M_PI*i/num1-M_PI/2.0);
         vert_aux.z = 0.0;
         perfil.push_back(vert_aux);
     }
@@ -488,8 +500,7 @@ _rotacion::_rotacion()
 }
 
 
-void _rotacion::parametros(vector<_vertex3f> perfil, int num, int tipo, int tapa_in, int tapa_su)
-{
+void _rotacion::parametros(vector<_vertex3f> perfil, int num, int tipo, int tapa_in, int tapa_su){
     int i,j;
     _vertex3f vertice_aux;
     _vertex3i cara_aux;
@@ -558,9 +569,12 @@ void _rotacion::parametros(vector<_vertex3f> perfil, int num, int tipo, int tapa
         }
     }
 
-    calcular_normales_caras();
+    int n_c = 2*(num_aux-1)*num+2*num;
+    colores_caras.resize(n_c);
+    colors_random();
+    // calcular_normales_caras();
 
-    colors_lambert_c(4, 6, 4, 0.4, 0.6, 0);
+    // colors_lambert_c(4, 6, 4, 0.4, 0.6, 0);
 }
 
 
