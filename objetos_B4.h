@@ -266,6 +266,9 @@ protected:
     _sustentacion sustentacion;
 };
 
+
+/***********************************COCHE************************************/
+
 class _ruedas: public _triangulos3D{
 public:
     _ruedas();
@@ -323,4 +326,21 @@ protected:
     _sustentacioncoche sustentacion;
     _ruedas ruedas;
     //_puerta puerta1, puerta2, puerta3, puerta4;
+};
+
+//***************************************************************************
+// OBJETO EXAMEN 2018
+//***************************************************************************
+
+class _ModeloJerarquico: public _triangulos3D {
+public:
+    _ModeloJerarquico();
+
+    void  draw(_modo modo, float r, float g, float b, float grosor);
+
+    float ancho1, alto1, fondo1, radio1, rota1, rota2;
+
+private:
+    _cubo nivel1, nivel2;
+    _cilindro nivel3_1, nivel3_2;
 };

@@ -305,8 +305,8 @@ _esferaDoble::_esferaDoble(float radio1, float radio2, int num1, int num2)
     vector <_vertex3f> perfil;
     _vertex3f vert_aux;
     
-    for(int i = 0; i < num1; i++){
-        if(i <= num1/4 || (i >= num1/2 && i <= 3*num1/4)){
+    for(int i = 1; i < num1; i++){
+        if(i <= num1/4 || i >= 3*num1/4){
             vert_aux.x = radio1*cos(M_PI*i/num1-M_PI/2.0);
             vert_aux.y = radio1*sin(M_PI*i/num1-M_PI/2.0);
             vert_aux.z = 0.0;
@@ -408,6 +408,7 @@ _objeto_ply::_objeto_ply()
    // leer lista de coordenadas de vértices y lista de indices de vértices
  
 }
+
 
 void _objeto_ply::parametros(char *archivo)
 {                                           // OBJETO TECLA "o"     
@@ -1144,6 +1145,64 @@ void _coche::draw(_modo modo, float r, float g, float b, float grosor){
     sustentacion.draw(modo, r, g, b, grosor, giro_puerta1, giro_puerta2, giro_puerta3);
 
     ruedas.draw(modo, r, g, b, grosor, giro_ruedas, giro_ruedas_delanteras, giro_antena, luz_encendida);
+
+    glPopMatrix();
+}
+
+/////////////////////////////////////////////////////////////////
+//                          EXAMEN 2018                        //
+/////////////////////////////////////////////////////////////////
+
+_ModeloJerarquico::_ModeloJerarquico(){
+    ancho1 = 1;
+    alto1 = 1;
+    fondo1 = 1;
+    radio1 = 0.1;
+    rota1 = 0;
+    rota2 = 0;
+}
+
+void _ModeloJerarquico::draw(_modo modo, float r, float g, float b, float grosor){
+    
+    glPushMatrix();
+
+    glPushMatrix();                         // NIVEL 1
+    glTranslatef(0, 0, 0);
+    glScalef(ancho1, alto1, fondo1);
+    nivel1.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(ancho1/2, alto1-alto1/4, fondo1/2);            // COLOCAR EL SEGUNDO CUBO Y TODO LO SUPERIOR
+    glRotatef(rota1, 0, 1, 0);
+
+    glPushMatrix();                                     // NIVEL 2
+    glTranslatef(0, alto1/4, 0);
+    glScalef(ancho1/2, alto1/2, fondo1/2);
+    nivel2.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0, alto1, 0);
+    glRotatef(rota2, 0, 1, 0);
+
+    glPushMatrix();                                     // NIVEL 3.1
+    glTranslatef(0, 0, 0);
+    glScalef(radio1/2, alto1, radio1/2);
+    nivel3_1.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+
+    glPushMatrix();                                     // NIVEL 3.2
+    glTranslatef(0, alto1/4, fondo1/5);
+    glRotatef(90, 1, 0, 0);
+    glScalef(radio1, alto1, radio1);
+    nivel3_2.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+
+    
+    glPopMatrix();
+    
+    glPopMatrix();
 
     glPopMatrix();
 }

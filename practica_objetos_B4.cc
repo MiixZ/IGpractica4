@@ -12,7 +12,8 @@
 using namespace std;
 
 // tipos
-typedef enum{CUBO, PIRAMIDE, OBJETO_PLY, ROTACION, EXTRUSION, CILINDRO, CONO, ESFERA, ROTACION_PLY, EXCAVADORA, COCHE, PIRAMIDEXAMEN, ESFERADOBLE} _tipo_objeto;
+typedef enum{CUBO, PIRAMIDE, OBJETO_PLY, ROTACION, EXTRUSION, CILINDRO, CONO, ESFERA, ROTACION_PLY, EXCAVADORA, COCHE, PIRAMIDEXAMEN, ESFERADOBLE
+            , MODELOJERARQUICO} _tipo_objeto;
 _tipo_objeto t_objeto=CUBO;
 _modo   modo=POINTS;
 
@@ -41,7 +42,8 @@ _rotacion_PLY objetoPLY;
 _excavadora excavadora;
 _coche coche;
 _piramideExamen piramide2(0.85,1.3);
-_esferaDoble esfera2(0.6, 0.4, 100, 100);
+_esferaDoble esfera2(1+0.6, 1+0.4, 25,25);
+_ModeloJerarquico modelo;
 
 // _objeto_ply *ply;
 
@@ -64,12 +66,12 @@ void clean_window()
 void change_projection()
 {
 
-glMatrixMode(GL_PROJECTION);
-glLoadIdentity();
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
 
-// formato(x_minimo,x_maximo, y_minimo, y_maximo,plano_delantero, plano_traser)
-//  plano_delantero>0  plano_trasero>PlanoDelantero)
-glFrustum(-Size_x,Size_x,-Size_y,Size_y,Front_plane,Back_plane);
+    // formato(x_minimo,x_maximo, y_minimo, y_maximo,plano_delantero, plano_traser)
+    //  plano_delantero>0  plano_trasero>PlanoDelantero)
+    glFrustum(-Size_x,Size_x,-Size_y,Size_y,Front_plane,Back_plane);
 }
 
 //**************************************************************************
@@ -134,6 +136,7 @@ switch (t_objeto){
         case COCHE: coche.draw(modo,1.0,0.0,0.0,5);break;
         case PIRAMIDEXAMEN: piramide2.draw(modo,1.0,0.0,0.0,5);break;
         case ESFERADOBLE: esfera2.draw(modo,1.0,0.0,0.0,5); break;
+        case MODELOJERARQUICO: modelo.draw(modo,1.0,0.0,0.0,5); break;
 	}
 }
 
@@ -202,7 +205,16 @@ void normal_key(unsigned char Tecla1,int x,int y)
         case 'K':t_objeto=COCHE;break;
         case 'B':t_objeto=PIRAMIDEXAMEN;break;
         case 'N':t_objeto=ESFERADOBLE;break;
+        case 'M':t_objeto=MODELOJERARQUICO;break;
         
+        case 'V': 
+            modelo.rota1+=5;
+            break;
+
+        case 'H':
+            modelo.rota2+=5;
+            break;
+
         case 'S':
             if(coche.anima == true)
                 coche.anima = false;
