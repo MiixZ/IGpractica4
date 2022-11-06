@@ -305,19 +305,18 @@ _esferaDoble::_esferaDoble(float radio1, float radio2, int num1, int num2)
     vector <_vertex3f> perfil;
     _vertex3f vert_aux;
     
+    for(int i = 1; i <= num1/2 + 1; i++){
+        vert_aux.x = radio1 + radio1*cos(M_PI*i/num1-M_PI/2.0);
+        vert_aux.y = radio1*sin(M_PI*i/num1-M_PI/2.0);
+        vert_aux.z = 0.0;
+        perfil.push_back(vert_aux);
+    }
+
     for(int i = 1; i < num1; i++){
-        if(i <= num1/4 || i >= 3*num1/4){
-            vert_aux.x = radio1*cos(M_PI*i/num1-M_PI/2.0);
-            vert_aux.y = radio1*sin(M_PI*i/num1-M_PI/2.0);
-            vert_aux.z = 0.0;
-            perfil.push_back(vert_aux);
-        }
-        else{
-            vert_aux.x = radio2*cos(M_PI*i/num1-M_PI/2.0);
-            vert_aux.y = radio2*sin(M_PI*i/num1-M_PI/2.0);
-            vert_aux.z = 0.0;
-            perfil.push_back(vert_aux);  
-        }
+        vert_aux.x = radio2*cos(M_PI*i/num1-M_PI/2.0);
+        vert_aux.y = -radio2 - radio2*sin(M_PI*i/num1-M_PI/2.0);
+        vert_aux.z = 0.0;
+        perfil.push_back(vert_aux);
     }
     parametros(perfil, num2, 2, 0, 0);
 }
@@ -503,10 +502,8 @@ void _rotacion::parametros(vector<_vertex3f> perfil, int num, int tipo, int tapa
     num_aux=perfil.size();
     if (tipo==1) num_aux=num_aux-1;
     vertices.resize(num_aux*num+2);
-    for (j=0;j<num;j++)
-    {
-        for (i=0;i<num_aux;i++)
-        {
+    for (j=0;j<num;j++){
+        for (i=0;i<num_aux;i++){
         vertice_aux.x=perfil[i].x*cos(2.0*M_PI*j/(1.0*num))+
                         perfil[i].z*sin(2.0*M_PI*j/(1.0*num));
         vertice_aux.z=-perfil[i].x*sin(2.0*M_PI*j/(1.0*num))+
@@ -518,10 +515,8 @@ void _rotacion::parametros(vector<_vertex3f> perfil, int num, int tipo, int tapa
 
     caras.resize(2*(num_aux-1)*num+2*num);
     int c=0;
-    for (j=0;j<num;j++)
-    {
-        for (i=0;i<num_aux-1;i++)
-        {
+    for (j=0;j<num;j++){
+        for (i=0;i<num_aux-1;i++){
             caras[c]._0=i+j*num_aux;
             caras[c]._1=((j+1)%num)*num_aux+i;
             caras[c]._2=1+i+j*num_aux;
@@ -534,33 +529,33 @@ void _rotacion::parametros(vector<_vertex3f> perfil, int num, int tipo, int tapa
     }
     
     //tapa inferior
-    int total=num_aux*num;
-    vertices[total].x=0.0;
-    if (tipo==2) vertices[total].y=-radio;
-    else vertices[total].y=perfil[0].y;
-    vertices[total].z=0.0;
+    if(tapa_su == 1){
+        int total=num_aux*num;
+        vertices[total].x=0.0;
+        if (tipo==2) vertices[total].y=-radio;
+        else vertices[total].y=perfil[0].y;
+        vertices[total].z=0.0;
 
-    for (j=0;j<num;j++)
-    {
-        caras[c]._0=j*num_aux;
-        caras[c]._1=((j+1)%num)*num_aux;
-        caras[c]._2=total;
-        c+=1;
-    } 
-    
-    //tapa superior
-    vertices[total+1].x=0.0;
-    if (tipo==1) vertices[total+1].y=perfil[1].y;
-    if (tipo==0) vertices[total+1].y=perfil[num_aux-1].y;
-    if (tipo==2) vertices[total+1].y=radio;
-    vertices[total+1].z=0.0;
-    
-    for (j=0;j<num;j++)
-    {
-        caras[c]._0=total+1;
-        caras[c]._1=((j+1)%num)*num_aux+num_aux-1;
-        caras[c]._2=num_aux-1+j*num_aux;
-        c+=1;
+        for (j=0;j<num;j++){
+            caras[c]._0=j*num_aux;
+            caras[c]._1=((j+1)%num)*num_aux;
+            caras[c]._2=total;
+            c+=1;
+        } 
+        
+        //tapa superior
+        vertices[total+1].x=0.0;
+        if (tipo==1) vertices[total+1].y=perfil[1].y;
+        if (tipo==0) vertices[total+1].y=perfil[num_aux-1].y;
+        if (tipo==2) vertices[total+1].y=radio;
+        vertices[total+1].z=0.0;
+
+        for (j=0;j<num;j++){
+            caras[c]._0=total+1;
+            caras[c]._1=((j+1)%num)*num_aux+num_aux-1;
+            caras[c]._2=num_aux-1+j*num_aux;
+            c+=1;
+        }
     }
 
     calcular_normales_caras();
@@ -1167,27 +1162,24 @@ void _ModeloJerarquico::draw(_modo modo, float r, float g, float b, float grosor
     glPushMatrix();
 
     glPushMatrix();                         // NIVEL 1
-    glTranslatef(0, 0, 0);
     glScalef(ancho1, alto1, fondo1);
     nivel1.draw(modo, r, g, b, grosor);
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(ancho1/2, alto1-alto1/4, fondo1/2);            // COLOCAR EL SEGUNDO CUBO Y TODO LO SUPERIOR
+    glTranslatef(ancho1/2, alto1, fondo1/2);            // COLOCAR EL SEGUNDO CUBO Y TODO LO SUPERIOR
     glRotatef(rota1, 0, 1, 0);
 
     glPushMatrix();                                     // NIVEL 2
-    glTranslatef(0, alto1/4, 0);
     glScalef(ancho1/2, alto1/2, fondo1/2);
     nivel2.draw(modo, r, g, b, grosor);
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(0, alto1, 0);
+    glTranslatef(0, 3*alto1/4, 0);
     glRotatef(rota2, 0, 1, 0);
 
     glPushMatrix();                                     // NIVEL 3.1
-    glTranslatef(0, 0, 0);
     glScalef(radio1/2, alto1, radio1/2);
     nivel3_1.draw(modo, r, g, b, grosor);
     glPopMatrix();
@@ -1198,8 +1190,7 @@ void _ModeloJerarquico::draw(_modo modo, float r, float g, float b, float grosor
     glScalef(radio1, alto1, radio1);
     nivel3_2.draw(modo, r, g, b, grosor);
     glPopMatrix();
-
-    
+  
     glPopMatrix();
     
     glPopMatrix();

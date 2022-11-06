@@ -42,7 +42,7 @@ _rotacion_PLY objetoPLY;
 _excavadora excavadora;
 _coche coche;
 _piramideExamen piramide2(0.85,1.3);
-_esferaDoble esfera2(1+0.6, 1+0.4, 25,25);
+_esferaDoble esfera2(0.4, 0.6, 25,25);
 _ModeloJerarquico modelo;
 
 // _objeto_ply *ply;
