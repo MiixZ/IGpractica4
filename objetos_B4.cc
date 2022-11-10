@@ -259,7 +259,6 @@ _cubo::_cubo(float tam)
 
 }
 
-
 _cilindro::_cilindro(float radio, float altura, int num){           // Añadir el enum, la tecla y en el main.
     vector<_vertex3f> perfil;
     _vertex3f vert_aux;
@@ -279,7 +278,6 @@ _cilindro::_cilindro(float radio, float altura, int num){           // Añadir e
     parametros(perfil, num, 0, 1, 1);
 }
 
-
 _cono::_cono(float radio, float altura, int num)
 {
     vector <_vertex3f> perfil;
@@ -295,7 +293,6 @@ _cono::_cono(float radio, float altura, int num)
     
     parametros(perfil, num, 1, 1, 1);
 }
-
 
 _esfera::_esfera(float radio, int num1, int num2)
 {
@@ -1191,16 +1188,17 @@ void _ModeloJerarquico::draw(_modo modo, float r, float g, float b, float grosor
 
     glPushMatrix();
     glTranslatef(0, 3*alto1/4, 0);
-    glRotatef(rota2, 0, 1, 0);
 
     glPushMatrix();                                     // NIVEL 3.1
-    glScalef(radio1/2, alto1, radio1/2);
+    glTranslatef(0, -alto1/6+rota2/8.5,rota2/8.5);
+    glRotatef(45,1,0,0);
+    glScalef(radio1/2, alto1+rota2, radio1/2);
     nivel3_1.draw(modo, r, g, b, grosor);
     glPopMatrix();
 
     glPushMatrix();                                     // NIVEL 3.2
-    glTranslatef(0, alto1/4, fondo1/5);
-    glRotatef(90, 1, 0, 0);
+    glTranslatef(0, 0.1+rota2/3.5,0.1+rota2/3.5);
+    glRotatef(125, 1, 0, 0);
     glScalef(radio1, alto1, radio1);
     nivel3_2.draw(modo, r, g, b, grosor);
     glPopMatrix();

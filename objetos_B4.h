@@ -115,7 +115,7 @@ public:
     void  parametros(vector<_vertex3f> perfil, int num, int tipo, int tapa_in, int tapa_su);
 };
 
-// CILINDRO.
+//CILINDRO.
 
 class _cilindro: public _rotacion
 {
@@ -127,8 +127,7 @@ public:
 
 class _cono: public _rotacion{
 public:
-    _cono(float radio, float altura, int num);
-    
+    _cono(float radio=1.0, float altura=0.5, int num=12);  
 };
 
 //ESFERA.
@@ -340,7 +339,10 @@ public:
 
     float ancho1, alto1, fondo1, radio1, rota1, rota2;
 
+    const float MAXIMO_CRECE = 1.2;
+
 private:
     _cubo nivel1, nivel2;
-    _cilindro nivel3_1, nivel3_2;
+    _cilindro nivel3_1;
+    _cono nivel3_2;
 };
