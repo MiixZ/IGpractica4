@@ -85,7 +85,6 @@ public:
 class _piramideExamen: public _triangulos3D
 {
 public:
-
 	_piramideExamen(float tam=0.5, float al=1.0);
 };
 
@@ -339,10 +338,9 @@ public:
 
     float ancho1, alto1, fondo1, radio1, rota1, rota2;
 
-    const float MAXIMO_CRECE = 1.2;
+    const float MAXIMO_CRECE = 3;
 
 private:
-    _cubo nivel1, nivel2;
-    _cilindro nivel3_1;
-    _cono nivel3_2;
+    _cubo nivel1;
+    _cilindro nivel2_1, nivel2_2;
 };

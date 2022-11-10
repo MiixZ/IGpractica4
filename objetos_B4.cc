@@ -314,19 +314,37 @@ _esferaDoble::_esferaDoble(float radio1, float radio2, int num1, int num2)
     vector <_vertex3f> perfil;
     _vertex3f vert_aux;
     
-    for(int i = 0; i < num1/2 + 1; i++){
-        vert_aux.x = radio2 + radio1*cos(M_PI*i/num1-M_PI/2.0);
-        vert_aux.y = radio1*sin(M_PI*i/num1-M_PI/2.0);
+    vert_aux.x=0.8;
+    vert_aux.y=0;
+    vert_aux.z=0;
+    perfil.push_back(vert_aux);
+
+    vert_aux.x=0.8;
+    vert_aux.y=0.3;
+    vert_aux.z=0;
+    perfil.push_back(vert_aux);
+
+    vert_aux.x=0.7;
+    vert_aux.y=0.3;
+    vert_aux.z=0;
+    perfil.push_back(vert_aux);
+
+    for(int i = num2/2+1; i < num1; i++){
+        vert_aux.x = 0.2 + 0.5*cos(M_PI*i/num1-M_PI/2.0);
+        vert_aux.y = 0.3 + 0.5*sin(M_PI*i/num1-M_PI/2.0);
         vert_aux.z = 0.0;
         perfil.push_back(vert_aux);
     }
 
-    for(int i = num1/2; i < num1; i++){
-        vert_aux.x = radio2*cos(M_PI*i/num1-M_PI/2.0);
-        vert_aux.y = -radio1 - radio2*sin(M_PI*i/num1-M_PI/2.0);
-        vert_aux.z = 0.0;
-        perfil.push_back(vert_aux);
-    }
+    vert_aux.x=0.2;
+    vert_aux.y=0.8;
+    vert_aux.z=0;
+    perfil.push_back(vert_aux);
+
+    vert_aux.x=0.2;
+    vert_aux.y=1;
+    vert_aux.z=0;
+    perfil.push_back(vert_aux);
     parametros(perfil, num2, 2, 0, 0);
 }
 
@@ -370,36 +388,29 @@ _piramideExamen::_piramideExamen(float tam, float al)
 {
 
 //vértices 
-    vertices.resize(9);
-    vertices[0].x=-tam;vertices[0].y=al/2;vertices[0].z=tam;
-    vertices[1].x=tam;vertices[1].y=al/2;vertices[1].z=tam;
-    vertices[2].x=tam;vertices[2].y=al/2;vertices[2].z=-tam;
-    vertices[3].x=-tam;vertices[3].y=al/2;vertices[3].z=-tam;
-    vertices[4].x=0;vertices[4].y=al+al/2;vertices[4].z=0;
-    vertices[5].x=-tam+tam/2;vertices[5].y=0;vertices[5].z=tam-tam/2;
-    vertices[6].x=tam-tam/2;vertices[6].y=0;vertices[6].z=tam-tam/2;
-    vertices[7].x=tam-tam/2;vertices[7].y=0;vertices[7].z=-tam+tam/2;
-    vertices[8].x=-tam+tam/2;vertices[8].y=0;vertices[8].z=-tam+tam/2;
+    vertices.resize(7);
+    vertices[0].x=-tam;vertices[0].y=0;vertices[0].z=tam;
+    vertices[1].x=tam;vertices[1].y=0;vertices[1].z=tam;
+    vertices[2].x=tam;vertices[2].y=0;vertices[2].z=-tam;
+    vertices[3].x=-tam;vertices[3].y=0;vertices[3].z=-tam;
+    vertices[4].x=tam;vertices[4].y=al;vertices[4].z=tam;
+    vertices[5].x=-tam;vertices[5].y=al;vertices[5].z=-tam;
+    vertices[6].x=-tam;vertices[6].y=2*al;vertices[6].z=tam;
 
-    caras.resize(14);
-    caras[0]._0=0;caras[0]._1=1;caras[0]._2=4;
-    caras[1]._0=1;caras[1]._1=2;caras[1]._2=4;
-    caras[2]._0=2;caras[2]._1=3;caras[2]._2=4;
-    caras[3]._0=3;caras[3]._1=0;caras[3]._2=4;
-    caras[4]._0=5;caras[4]._1=6;caras[4]._2=0;
-    caras[5]._0=6;caras[5]._1=1;caras[5]._2=0;
-    caras[6]._0=6;caras[6]._1=7;caras[6]._2=1;
-    caras[7]._0=7;caras[7]._1=2;caras[7]._2=1;
-    caras[8]._0=7;caras[8]._1=8;caras[8]._2=2;
-    caras[9]._0=8;caras[9]._1=3;caras[9]._2=2;
-    caras[10]._0=8;caras[10]._1=5;caras[10]._2=3;
-    caras[11]._0=5;caras[11]._1=0;caras[11]._2=3;
-    caras[12]._0=5;caras[12]._1=7;caras[12]._2=8;
-    caras[13]._0=5;caras[13]._1=6;caras[13]._2=7;
+    caras.resize(9);
+    caras[0]._0=0;caras[0]._1=4;caras[0]._2=1;
+    caras[1]._0=0;caras[1]._1=4;caras[1]._2=6;
+    caras[2]._0=1;caras[2]._1=4;caras[2]._2=2;
+    caras[3]._0=4;caras[3]._1=2;caras[3]._2=6;
+    caras[4]._0=2;caras[4]._1=3;caras[4]._2=5;
+    caras[5]._0=5;caras[5]._1=2;caras[5]._2=6;
+    caras[6]._0=5;caras[6]._1=0;caras[6]._2=6;
+    caras[7]._0=0;caras[7]._1=1;caras[7]._2=2;
+    caras[8]._0=0;caras[8]._1=2;caras[8]._2=3;
     
-    colores_caras.resize(14);
+    colores_caras.resize(9);
     srand(10);
-    for(int i = 0; i < 14; i++){
+    for(int i = 0; i < 9; i++){
         colores_caras[i].r = rand()%1000/1000.0;
         colores_caras[i].g = rand()%1000/1000.0;
         colores_caras[i].b = rand()%1000/1000.0;    
@@ -1161,7 +1172,7 @@ void _coche::draw(_modo modo, float r, float g, float b, float grosor){
 
 _ModeloJerarquico::_ModeloJerarquico(){
     ancho1 = 1;
-    alto1 = 1;
+    alto1 = 2;
     fondo1 = 1;
     radio1 = 0.1;
     rota1 = 0;
@@ -1173,38 +1184,23 @@ void _ModeloJerarquico::draw(_modo modo, float r, float g, float b, float grosor
     glPushMatrix();
 
     glPushMatrix();                         // NIVEL 1
-    glScalef(ancho1, alto1, fondo1);
+    glScalef(ancho1, alto1, fondo1*2);
     nivel1.draw(modo, r, g, b, grosor);
     glPopMatrix();
 
-    glPushMatrix();
-    glTranslatef(ancho1/2, alto1, fondo1/2);            // COLOCAR EL SEGUNDO CUBO Y TODO LO SUPERIOR
+    glPushMatrix();                                     // NIVEL 2.1
+    glTranslatef(ancho1+rota2/10, 5*alto1/6,0);
+    glRotatef(90,0,0,1);
+    glScalef(radio1, alto1+rota2, radio1);
+    nivel2_1.draw(modo, r, g, b, grosor);
+    glPopMatrix();
+
+    glPushMatrix();                                                     // NIVEL 2.2
+    glTranslatef(ancho1/2+alto1/2+rota2/3, 5*alto1/6,radio1);
+    glRotatef(90, 1, 0, 0);
     glRotatef(rota1, 0, 1, 0);
-
-    glPushMatrix();                                     // NIVEL 2
-    glScalef(ancho1/2, alto1/2, fondo1/2);
-    nivel2.draw(modo, r, g, b, grosor);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0, 3*alto1/4, 0);
-
-    glPushMatrix();                                     // NIVEL 3.1
-    glTranslatef(0, -alto1/6+rota2/8.5,rota2/8.5);
-    glRotatef(45,1,0,0);
-    glScalef(radio1/2, alto1+rota2, radio1/2);
-    nivel3_1.draw(modo, r, g, b, grosor);
-    glPopMatrix();
-
-    glPushMatrix();                                     // NIVEL 3.2
-    glTranslatef(0, 0.1+rota2/3.5,0.1+rota2/3.5);
-    glRotatef(125, 1, 0, 0);
-    glScalef(radio1, alto1, radio1);
-    nivel3_2.draw(modo, r, g, b, grosor);
-    glPopMatrix();
-  
-    glPopMatrix();
-    
+    glScalef(radio1/2, 0.1, radio1*3);
+    nivel2_2.draw(modo, r, g, b, grosor);
     glPopMatrix();
 
     glPopMatrix();

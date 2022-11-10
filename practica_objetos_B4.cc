@@ -214,7 +214,13 @@ void normal_key(unsigned char Tecla1,int x,int y)
         case 'H':
             modelo.rota2+=0.1;
             if(modelo.rota2>=modelo.MAXIMO_CRECE)
-                modelo.rota2 = modelo.MAXIMO_CRECE;
+                modelo.rota2=modelo.MAXIMO_CRECE;
+            break;
+
+        case 'J':
+            modelo.rota2-=0.1;
+            if(modelo.rota2<=0)
+                modelo.rota2 = 0;
             break;
 
         case 'S':
