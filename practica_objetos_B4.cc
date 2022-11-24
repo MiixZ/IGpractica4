@@ -8,7 +8,6 @@
 #include <vector>
 #include "objetos_B4.h"
 
-
 using namespace std;
 
 // tipos
@@ -52,8 +51,7 @@ _ModeloJerarquico modelo;
 //
 //***************************************************************************
 
-void clean_window()
-{
+void clean_window(){
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
@@ -63,8 +61,7 @@ void clean_window()
 // Función para definir la transformación de proyección
 //***************************************************************************
 
-void change_projection()
-{
+void change_projection(){
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -78,8 +75,7 @@ void change_projection()
 // Función para definir la transformación*ply1 de vista (posicionar la cámara)
 //***************************************************************************
 
-void change_observer()
-{
+void change_observer(){
 
     // posicion del observador
     glMatrixMode(GL_MODELVIEW);
@@ -93,8 +89,7 @@ void change_observer()
 // Función que dibuja los ejes utilizando la primitiva grafica de lineas
 //***************************************************************************
 
-void draw_axis()
-{
+void draw_axis(){
 	
     glDisable(GL_LIGHTING);
     glLineWidth(2);
@@ -119,9 +114,7 @@ void draw_axis()
 // Función que dibuja los objetos
 //**************************************************************************
 
-void draw_objects()
-{
-
+void draw_objects(){
 switch (t_objeto){
 	case CUBO: cubo.draw(modo,1.0,0.0,0.0,5);break;
 	case PIRAMIDE: piramide.draw(modo,1.0,0.0,0.0,5);break;
@@ -144,7 +137,7 @@ switch (t_objeto){
 //  LUCES
 //***************************************************************************
 
-void luces(){
+void luces(float alpha){
     GLfloat luz_ambinete[]  = {0.2, 0.2, 0.2, 1.0},
             luz_difusa[]  = {1.0, 1.0, 1.0, 1.0},
             luz_especular[] = {1.0, 0.0, 1.0, 1.0},
@@ -153,7 +146,12 @@ void luces(){
     glLightfv(GL_LIGHT1, GL_AMBIENT, luz_ambinete);
     glLightfv(GL_LIGHT1, GL_DIFFUSE, luz_difusa);
     glLightfv(GL_LIGHT1, GL_SPECULAR, luz_especular);
+
+    glPushMatrix();
+
     glLightfv(GL_LIGHT1, GL_POSITION, luz_posicion);
+
+    glPopMatrix();
 
     glEnable(GL_LIGHT1);
     glDisable(GL_LIGHT0);
@@ -166,7 +164,7 @@ void luces(){
 void draw(void){
     clean_window();
     change_observer();
-    luces();
+    luces(13);
     draw_axis();
     draw_objects();
     glutSwapBuffers();
@@ -210,6 +208,7 @@ void normal_key(unsigned char Tecla1,int x,int y){
         case '3':modo=SOLID;break;
         case '4':modo=SOLID_COLORS;break;
         case '5':modo=SOLID_FLAT;break;
+        case '6':modo=SOLID_SMOOTH;break;
         case 'P':t_objeto=PIRAMIDE;break;
         case 'C':t_objeto=CUBO;break;
         case 'O':t_objeto=OBJETO_PLY;break;	
@@ -219,7 +218,7 @@ void normal_key(unsigned char Tecla1,int x,int y){
         case 'E':t_objeto=ESFERA;break;
         case 'X':t_objeto=EXTRUSION;break;
         case 'L':t_objeto=ROTACION_PLY;break;
-        case 'A':t_objeto=EXCAVADORA;break;
+        //case 'A':t_objeto=EXCAVADORA;break;
         case 'K':t_objeto=COCHE;break;
         case 'B':t_objeto=PIRAMIDEXAMEN;break;
         case 'N':t_objeto=ESFERADOBLE;break;
@@ -345,14 +344,11 @@ switch (Tecla1){
     glutPostRedisplay();
 }
 
-
-
 //***************************************************************************
 // Función de incialización
 //***************************************************************************
 
-void initialize(void)
-{
+void initialize(void){
     // Se inicalizan la ventana y los planos de corte
     Size_x=0.5;
     Size_y=0.5;
@@ -383,9 +379,7 @@ void initialize(void)
 //***************************************************************************
 
 
-int main(int argc, char *argv[] )
-{
- 
+int main(int argc, char *argv[] ){
     // Perfil 
 
     vector<_vertex3f> perfil, poligono;

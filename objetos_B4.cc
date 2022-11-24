@@ -29,13 +29,11 @@ void _puntos3D::draw_puntos(float r, float g, float b, int grosor)
     glEnd();
 }
 
-
 //*************************************************************************
 // _triangulos3D
 //*************************************************************************
 
-_triangulos3D::_triangulos3D()
-{
+_triangulos3D::_triangulos3D(){
     ambiente_difuso =_vertex4f(1.0, 0.8, 0.0, 1.0);
     especular=_vertex4f(0.0, 0.5, 0.5, 1.0);
     brillo = 10;
@@ -132,6 +130,34 @@ void _triangulos3D::draw_solido_plano(){
     glDisable(GL_LIGHTING);
 }
 
+void _triangulos3D::draw_solido_suave() {
+    glEnable(GL_LIGHTING);
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_NORMALIZE);
+
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, (GLfloat *)&ambiente_difuso);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, (GLfloat*)&especular);
+    glMaterialf(GL_FRONT, GL_SHININESS, brillo);  // este es solo float
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glBegin(GL_TRIANGLES);
+
+    int num_tot_caras = caras.size();
+
+    for (int i = 0; i < num_tot_caras; i++) {
+        glNormal3fv((GLfloat *)&normales_vertices[caras[i]._0]);
+        glVertex3fv((GLfloat*)&vertices[caras[i]._0]);
+
+        glNormal3fv((GLfloat *)&normales_vertices[caras[i]._1]);
+        glVertex3fv((GLfloat*)&vertices[caras[i]._1]);
+
+        glNormal3fv((GLfloat *)&normales_vertices[caras[i]._2]);
+        glVertex3fv((GLfloat*)&vertices[caras[i]._2]);
+    }
+    glDisable(GL_LIGHTING);
+    glEnd();
+}
+
 //*************************************************************************
 // dibujar con distintos modos
 //*************************************************************************
@@ -143,10 +169,9 @@ void _triangulos3D::draw(_modo modo, float r, float g, float b, float grosor){
         case SOLID:draw_solido(r, g, b);break;
         case SOLID_COLORS:draw_solido_colores();break;
         case SOLID_FLAT:draw_solido_plano();break;
-        //case SOLID_SMOOTH:draw_solido_suave();break;
+        case SOLID_SMOOTH:draw_solido_suave();break;
     }
 }
-
 
 void _triangulos3D::colors_chess(float r1, float g1, float b1, float r2, float g2, float b2)
 {
@@ -205,9 +230,9 @@ void _triangulos3D::calcular_normales_vertices() {
     }
 
     for(i = 0; i < caras.size(); i++){
-        normales_vertices[caras[i]._0].x += normales_caras[i];
-        normales_vertices[caras[i]._1].y += normales_caras[i];
-        normales_vertices[caras[i]._2].z += normales_caras[i];
+        normales_vertices[caras[i]._0] += normales_caras[i];
+        normales_vertices[caras[i]._1] += normales_caras[i];
+        normales_vertices[caras[i]._2] += normales_caras[i];
     }
 
     for(i=0; i < n_v; i++){
@@ -253,8 +278,7 @@ void _triangulos3D::colors_lambert_c(float l_x, float l_y, float l_z, float r, f
 // clase cubo
 //*************************************************************************
 
-_cubo::_cubo(float tam)
-{
+_cubo::_cubo(float tam){
 //vértices
     vertices.resize(8); 
     vertices[0].x=-tam; vertices[0].y=0; vertices[0].z=tam;
@@ -309,6 +333,7 @@ _cubo::_cubo(float tam)
     */
 
     calcular_normales_caras();
+    calcular_normales_vertices();
 
     colors_lambert_c(0, 20, 20, 1.0, 0.8, 0);
 }
@@ -406,8 +431,7 @@ _esferaDoble::_esferaDoble(float radio1, float radio2, int num1, int num2)
 // clase piramide
 //*************************************************************************
 
-_piramide::_piramide(float tam, float al)
-{
+_piramide::_piramide(float tam, float al){
 
 //vertices 
     vertices.resize(5); 
@@ -433,6 +457,7 @@ _piramide::_piramide(float tam, float al)
         colores_caras[i].b = rand()%1000/1000.0;    
     }*/
     calcular_normales_caras();
+    calcular_normales_vertices();
 
     colors_lambert_c(0, 20, 20, 1.0, 0.8, 0);
 }
@@ -636,6 +661,7 @@ void _rotacion::parametros(vector<_vertex3f> perfil, int num, int tipo, int tapa
     colores_caras.resize(n_c);
     //colors_random();
      calcular_normales_caras();
+     calcular_normales_vertices();
 
      colors_lambert_c(0, 20, 20, 1.0, 0.8, 0);
 }
