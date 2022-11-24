@@ -36,19 +36,22 @@ void _puntos3D::draw_puntos(float r, float g, float b, int grosor)
 
 _triangulos3D::_triangulos3D()
 {
+    ambiente_difuso =_vertex4f(1.0, 0.8, 0.0, 1.0);
+    especular=_vertex4f(0.0, 0.5, 0.5, 1.0);
+    brillo = 10;
 }
 
 void _triangulos3D::colors_random()
 {
-int i, n_c;
-n_c=caras.size();
-colores_caras.resize(n_c);
-srand (time(NULL));
-for (i=0;i<n_c;i++)  
-  {colores_caras[i].r=rand()%1000/1000.0;
-   colores_caras[i].g=rand()%1000/1000.0;
-   colores_caras[i].b=rand()%1000/1000.0;
-  }
+    int i, n_c;
+    n_c=caras.size();
+    colores_caras.resize(n_c);
+    srand (time(NULL));
+    for (i=0;i<n_c;i++) {
+        colores_caras[i].r=rand()%1000/1000.0;
+        colores_caras[i].g=rand()%1000/1000.0;
+        colores_caras[i].b=rand()%1000/1000.0;
+    }
 }
 
 //*************************************************************************
@@ -93,8 +96,7 @@ void _triangulos3D::draw_solido(float r, float g, float b)
 // dibujar en modo sólido con colores diferentes para cada cara
 //*************************************************************************
 
-void _triangulos3D::draw_solido_colores()
-{
+void _triangulos3D::draw_solido_colores(){
     int i;
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
     glBegin(GL_TRIANGLES);
@@ -104,22 +106,45 @@ void _triangulos3D::draw_solido_colores()
         glVertex3fv((GLfloat *) &vertices[caras[i]._0]);
         glVertex3fv((GLfloat *) &vertices[caras[i]._1]);
         glVertex3fv((GLfloat *) &vertices[caras[i]._2]);
-        }
+    }
     glEnd();
+}
+
+void _triangulos3D::draw_solido_plano(){
+    int i;
+    glEnable(GL_LIGHTING);
+
+    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, (GLfloat *) &ambiente_difuso);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, (GLfloat *) &especular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, (GLfloat *) &brillo);
+
+    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+    glBegin(GL_TRIANGLES);
+    
+    for(i=0;i<caras.size();i++){
+        glNormal3f(normales_caras[i].x, normales_caras[i].y, normales_caras[i].z);
+        glVertex3fv((GLfloat *) &vertices[caras[i]._0]);
+        glVertex3fv((GLfloat *) &vertices[caras[i]._1]);
+        glVertex3fv((GLfloat *) &vertices[caras[i]._2]);
+    }
+    glEnd();
+
+    glDisable(GL_LIGHTING);
 }
 
 //*************************************************************************
 // dibujar con distintos modos
 //*************************************************************************
 
-void _triangulos3D::draw(_modo modo, float r, float g, float b, float grosor)
-{
-switch (modo){
-	case POINTS:draw_puntos(r, g, b, grosor);break;
-	case EDGES:draw_aristas(r, g, b, grosor);break;
-	case SOLID:draw_solido(r, g, b);break;
-	case SOLID_COLORS:draw_solido_colores();break;
-	}
+void _triangulos3D::draw(_modo modo, float r, float g, float b, float grosor){
+    switch (modo){
+        case POINTS:draw_puntos(r, g, b, grosor);break;
+        case EDGES:draw_aristas(r, g, b, grosor);break;
+        case SOLID:draw_solido(r, g, b);break;
+        case SOLID_COLORS:draw_solido_colores();break;
+        case SOLID_FLAT:draw_solido_plano();break;
+        //case SOLID_SMOOTH:draw_solido_suave();break;
+    }
 }
 
 
@@ -141,7 +166,6 @@ colores_caras.resize(n_c);
         } 
     }
 }
-
 
 void _triangulos3D::calcular_normales_caras() {
     int n_c;
@@ -168,6 +192,33 @@ void _triangulos3D::calcular_normales_caras() {
     }
 }
 
+void _triangulos3D::calcular_normales_vertices() {
+    int i, n_v;
+    float norma;
+    n_v = vertices.size();
+    normales_vertices.resize(n_v);
+
+    for(i=0; i < n_v; i++){
+        normales_vertices[i].x = 0;
+        normales_vertices[i].y = 0;
+        normales_vertices[i].z = 0;
+    }
+
+    for(i = 0; i < caras.size(); i++){
+        normales_vertices[caras[i]._0].x += normales_caras[i];
+        normales_vertices[caras[i]._1].y += normales_caras[i];
+        normales_vertices[caras[i]._2].z += normales_caras[i];
+    }
+
+    for(i=0; i < n_v; i++){
+        norma = sqrt(normales_vertices[i].x*normales_vertices[i].x +
+                    normales_vertices[i].y*normales_vertices[i].y +
+                    normales_vertices[i].z*normales_vertices[i].z);
+        normales_vertices[i].x /= norma;
+        normales_vertices[i].y /= norma;
+        normales_vertices[i].z /= norma;
+    }
+}
 
 void _triangulos3D::colors_lambert_c(float l_x, float l_y, float l_z, float r, float g, float b){       // l_x, l_y, l_z determina dónde está la luz.
     int n_c;
@@ -225,7 +276,7 @@ _cubo::_cubo(float tam)
     colores_vertices[5].r=0.35; colores_vertices[5].g=0.84; colores_vertices[5].b=0.99;
     colores_vertices[6].r=0,99; colores_vertices[6].g=0.19; colores_vertices[6].b=0.79;
     colores_vertices[7].r=0.44; colores_vertices[7].g=0.41; colores_vertices[7].b=0.24;*/
-    
+ 
 // caras
     caras.resize(12);
     caras[0]._0=0; caras[0]._1=1; caras[0]._2=4;
@@ -243,7 +294,7 @@ _cubo::_cubo(float tam)
     
 //colores caras.
     colores_caras.resize(12);    // valores entre 0 y 1.
-    colores_caras[0].r=0; colores_caras[0].g=0.5; colores_caras[0].b=0.5;
+    /*colores_caras[0].r=0; colores_caras[0].g=0.5; colores_caras[0].b=0.5;
     colores_caras[1].r=0.2; colores_caras[1].g=1; colores_caras[1].b=0.4;
     colores_caras[2].r=0.6; colores_caras[2].g=0.8; colores_caras[2].b=0.8;
     colores_caras[3].r=0.8; colores_caras[3].g=0.6; colores_caras[3].b=0.6;
@@ -255,7 +306,11 @@ _cubo::_cubo(float tam)
     colores_caras[9].r=0.11; colores_caras[9].g=0.23; colores_caras[9].b=0.2;
     colores_caras[10].r=0.1; colores_caras[10].g=0.2; colores_caras[10].b=1;
     colores_caras[11].r=0.19; colores_caras[11].g=0.85; colores_caras[11].b=0.33;
+    */
 
+    calcular_normales_caras();
+
+    colors_lambert_c(0, 20, 20, 1.0, 0.8, 0);
 }
 
 _cilindro::_cilindro(float radio, float altura, int num){           // Añadir el enum, la tecla y en el main.
@@ -372,11 +427,14 @@ _piramide::_piramide(float tam, float al)
     
     colores_caras.resize(6);
     srand(10);
-    for(int i = 0; i < 6; i++){
+    /*for(int i = 0; i < 6; i++){
         colores_caras[i].r = rand()%1000/1000.0;
         colores_caras[i].g = rand()%1000/1000.0;
         colores_caras[i].b = rand()%1000/1000.0;    
-    }
+    }*/
+    calcular_normales_caras();
+
+    colors_lambert_c(0, 20, 20, 1.0, 0.8, 0);
 }
 
 //*************************************************************************
@@ -420,7 +478,6 @@ _piramideExamen::_piramideExamen(float tam, float al)
 // clase objeto ply
 //*************************************************************************
 
-
 _objeto_ply::_objeto_ply() 
 {
    // leer lista de coordenadas de vértices y lista de indices de vértices
@@ -428,8 +485,7 @@ _objeto_ply::_objeto_ply()
 }
 
 
-void _objeto_ply::parametros(char *archivo)
-{                                           // OBJETO TECLA "o"     
+void _objeto_ply::parametros(char *archivo){                                           // OBJETO TECLA "o"     
     int n_ver,n_car;
 
     vector<float> ver_ply ;
@@ -464,7 +520,7 @@ void _objeto_ply::parametros(char *archivo)
 
 // Colores
 
-    colors_lambert_c(0, 10, 40, 1.0, 0.8, 0);
+    colors_lambert_c(0, 20, 20, 1.0, 0.8, 0);
 
 /*
 //colores caras
@@ -578,10 +634,10 @@ void _rotacion::parametros(vector<_vertex3f> perfil, int num, int tipo, int tapa
 
     int n_c = 2*(num_aux-1)*num+2*num;
     colores_caras.resize(n_c);
-    colors_random();
-    // calcular_normales_caras();
+    //colors_random();
+     calcular_normales_caras();
 
-    // colors_lambert_c(4, 6, 4, 0.4, 0.6, 0);
+     colors_lambert_c(0, 20, 20, 1.0, 0.8, 0);
 }
 
 
@@ -625,12 +681,15 @@ _extrusion::_extrusion(vector<_vertex3f> poligono, float x, float y, float z)
     }   
     
     colores_caras.resize(num_Caras);
-    srand(10);
+    /*srand(10);
     for(int i = 0; i < num_Caras; i++){
         colores_caras[i].r = rand()%1000/1000.0;
         colores_caras[i].g = rand()%1000/1000.0;
         colores_caras[i].b = rand()%1000/1000.0;
-    }
+    }*/
+    calcular_normales_caras();
+
+    colors_lambert_c(0, 20, 20, 1.0, 0.8, 0);
 }
 
 //************************************************************************

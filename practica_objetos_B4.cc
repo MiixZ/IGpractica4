@@ -32,7 +32,7 @@ int Window_x=50,Window_y=50,Window_width=650,Window_high=650;
 // objetos
 _cubo cubo;
 _piramide piramide(0.85,1.3);
-_objeto_ply  ply; 
+_objeto_ply ply; 
 _rotacion rotacion; 
 _extrusion *extrusion;
 _cilindro cilindro(1,2,6);
@@ -60,7 +60,7 @@ void clean_window()
 
 
 //**************************************************************************
-// Funcion para definir la transformación de proyeccion
+// Función para definir la transformación de proyección
 //***************************************************************************
 
 void change_projection()
@@ -75,7 +75,7 @@ void change_projection()
 }
 
 //**************************************************************************
-// Funcion para definir la transformación*ply1 de vista (posicionar la camara)
+// Función para definir la transformación*ply1 de vista (posicionar la cámara)
 //***************************************************************************
 
 void change_observer()
@@ -90,7 +90,7 @@ void change_observer()
 }
 
 //**************************************************************************
-// Funcion que dibuja los ejes utilizando la primitiva grafica de lineas
+// Función que dibuja los ejes utilizando la primitiva grafica de lineas
 //***************************************************************************
 
 void draw_axis()
@@ -116,8 +116,8 @@ void draw_axis()
 
 
 //**************************************************************************
-// Funcion que dibuja los objetos
-//****************************2***********************************************
+// Función que dibuja los objetos
+//**************************************************************************
 
 void draw_objects()
 {
@@ -131,7 +131,7 @@ switch (t_objeto){
         case ESFERA: esfera.draw(modo,1.0,0.0,0.0,5);break;
         case CONO: cono.draw(modo,1.0,0.0,0.0, 5);break;
         case CILINDRO: cilindro.draw(modo,1.0,0.0,0.0,5);break;
-        case ROTACION_PLY: objetoPLY.draw(modo, 1.0, 0.0, 0.0, 5); break;
+        case ROTACION_PLY: ply.draw(modo, 1.0, 0.0, 0.0, 5); break;
         case EXCAVADORA: excavadora.draw(modo,1.0,0.0,0.0,5);break;
         case COCHE: coche.draw(modo,1.0,0.0,0.0,5);break;
         case PIRAMIDEXAMEN: piramide2.draw(modo,1.0,0.0,0.0,5);break;
@@ -141,13 +141,32 @@ switch (t_objeto){
 }
 
 //**************************************************************************
+//  LUCES
+//***************************************************************************
+
+void luces(){
+    GLfloat luz_ambinete[]  = {0.2, 0.2, 0.2, 1.0},
+            luz_difusa[]  = {1.0, 1.0, 1.0, 1.0},
+            luz_especular[] = {1.0, 0.0, 1.0, 1.0},
+            luz_posicion[] = {0.0, 20.0, 20.0, 1.0};
+
+    glLightfv(GL_LIGHT1, GL_AMBIENT, luz_ambinete);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, luz_difusa);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, luz_especular);
+    glLightfv(GL_LIGHT1, GL_POSITION, luz_posicion);
+
+    glEnable(GL_LIGHT1);
+    glDisable(GL_LIGHT0);
+} 
+
+//**************************************************************************
 //
 //***************************************************************************
 
-void draw(void)
-{
+void draw(void){
     clean_window();
     change_observer();
+    luces();
     draw_axis();
     draw_objects();
     glutSwapBuffers();
@@ -156,15 +175,14 @@ void draw(void)
 
 
 //***************************************************************************
-// Funcion llamada cuando se produce un cambio en el tamaño de la ventana
+// Función llamada cuando se produce un cambio en el tamaño de la ventana
 //
-// el evento manda a la funcion:
+// El evento manda a la función:
 // nuevo ancho
 // nuevo alto
 //***************************************************************************
 
-void change_window_size(int Ancho1,int Alto1)
-{
+void change_window_size(int Ancho1,int Alto1){
     float Aspect_ratio;
 
     Aspect_ratio=(float) Alto1/(float )Ancho1;
@@ -176,22 +194,22 @@ void change_window_size(int Ancho1,int Alto1)
 
 
 //***************************************************************************
-// Funcion llamada cuando se aprieta una tecla normal
+// Función llamada cuando se aprieta una tecla normal
 //
-// el evento manda a la funcion:
-// codigo de la tecla
-// posicion x del raton
-// posicion y del raton
+// El evento manda a la funcion:
+// Código de la tecla
+// Posición x del ratón
+// Posición y del ratón
 //***************************************************************************
 
-void normal_key(unsigned char Tecla1,int x,int y)
-{
+void normal_key(unsigned char Tecla1,int x,int y){
     switch (toupper(Tecla1)){
         case 'Q':exit(0);
         case '1':modo=POINTS;break;
         case '2':modo=EDGES;break;
         case '3':modo=SOLID;break;
         case '4':modo=SOLID_COLORS;break;
+        case '5':modo=SOLID_FLAT;break;
         case 'P':t_objeto=PIRAMIDE;break;
         case 'C':t_objeto=CUBO;break;
         case 'O':t_objeto=OBJETO_PLY;break;	
@@ -236,10 +254,10 @@ void normal_key(unsigned char Tecla1,int x,int y)
 //***************************************************************************
 // Función l-olamada cuando se aprieta una tecla especial
 //
-// el evento manda a la funcion:
-// codigo de la tecla
-// posicion x del ratón
-// posicion y del ratón
+// El evento manda a la función:
+// Código de la tecla
+// Posición x del ratón
+// Posición y del ratón
 
 //***************************************************************************
 
@@ -274,8 +292,7 @@ void animacioncoche(){
     glutPostRedisplay();
 }
 
-void special_key(int Tecla1,int x,int y)
-{
+void special_key(int Tecla1,int x,int y){
 
 switch (Tecla1){
         case GLUT_KEY_LEFT:Observer_angle_y--;break;
@@ -331,27 +348,27 @@ switch (Tecla1){
 
 
 //***************************************************************************
-// Funcion de incializacion
+// Función de incialización
 //***************************************************************************
 
 void initialize(void)
 {
-    // se inicalizan la ventana y los planos de corte
+    // Se inicalizan la ventana y los planos de corte
     Size_x=0.5;
     Size_y=0.5;
     Front_plane=1;
     Back_plane=1000;
 
-    // se incia la posicion del observador, en el eje z
+    // Se incia la posicion del observador, en el eje z
     Observer_distance=4*Front_plane;
     Observer_angle_x=0;
     Observer_angle_y=0;
 
-    // se indica el color para limpiar la ventana	(r,v,a,al)
+    // Se indica el color para limpiar la ventana	(r,v,a,al)
     // blanco=(1,1,1,1) rojo=(1,0,0,1), ...
     glClearColor(1,1,1,1);
 
-    // se habilita el z-bufer
+    // Se habilita el z-bufer
     glEnable(GL_DEPTH_TEST);
     change_projection();
     glViewport(0,0,Window_width,Window_high);
@@ -369,7 +386,7 @@ void initialize(void)
 int main(int argc, char *argv[] )
 {
  
-    // perfil 
+    // Perfil 
 
     vector<_vertex3f> perfil, poligono;
     _vertex3f aux;
@@ -398,10 +415,10 @@ int main(int argc, char *argv[] )
 
     extrusion= new _extrusion(poligono, 0.25, 1.0, 0.25);
 
-    // se llama a la inicialización de glut
+    // Se llama a la inicialización de glut
     glutInit(&argc, argv);
 
-    // se indica las caracteristicas que se desean para la visualización con OpenGL
+    // Se indica las caracteristicas que se desean para la visualización con OpenGL
     // Las posibilidades son:
     // GLUT_SIMPLE -> memoria de imagen simple
     // GLUT_DOUBLE -> memoria de imagen doble
@@ -412,38 +429,38 @@ int main(int argc, char *argv[] )
     // GLUT_STENCIL -> memoria de estarcido_rotation Rotation;
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
-    // posicion de la esquina inferior izquierdad de la ventana
+    // Posición de la esquina inferior izquierdad de la ventana
     glutInitWindowPosition(Window_x,Window_y);
 
-    // tamaño de la ventana (ancho y alto)
+    // Tamaño de la ventana (ancho y alto)
     glutInitWindowSize(Window_width,Window_high);
 
-    // llamada para crear la ventana, indicando el titulo (no se visualiza hasta que se llama
+    // Llamada para crear la ventana, indicando el titulo (no se visualiza hasta que se llama
     // al bucle de eventos)
-    glutCreateWindow("PRACTICA - 2");
+    glutCreateWindow("PRACTICA - 4");
 
-    // asignación de la funcion llamada "dibujar" al evento de dibujo
+    // Asignación de la funcion llamada "dibujar" al evento de dibujo
     glutDisplayFunc(draw);
-    // asignación de la funcion llamada "change_window_size" al evento correspondiente
+    // Asignación de la funcion llamada "change_window_size" al evento correspondiente
     glutReshapeFunc(change_window_size);
-    // asignación de la funcion llamada "normal_key" al evento correspondiente
+    // Asignación de la funcion llamada "normal_key" al evento correspondiente
     glutKeyboardFunc(normal_key);
-    // asignación de la funcion llamada "tecla_Especial" al evento correspondiente
+    // Asignación de la funcion llamada "tecla_Especial" al evento correspondiente
     glutSpecialFunc(special_key);
 
-    // funcion de inicialización
+    // Función de inicialización
     initialize();
 
 
     glutIdleFunc(animacioncoche);
 
-    // creación del objeto ply
+    // Creación del objeto ply
     ply.parametros(argv[1]);
     objetoPLY.parametros_PLY(argv[2], 8);
 
-    //ply = new _objeto_ply(argv[1]);
+    //  ply = new _objeto_ply(argv[1]);
 
-    // inicio del bucle de eventos
+    // Inicio del bucle de eventos
     glutMainLoop();
     return 0;
 }

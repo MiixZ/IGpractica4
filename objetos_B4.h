@@ -6,10 +6,11 @@
 #include <GL/gl.h>
 #include "vertex.h"
 #include <stdlib.h>
+#include "CImg.h"
 
 
 const float AXIS_SIZE=5000;
-typedef enum{POINTS,EDGES,SOLID,SOLID_COLORS} _modo;
+typedef enum{POINTS,EDGES,SOLID,SOLID_COLORS,SOLID_FLAT, SOLID_SMOOTH} _modo;
 
 //*************************************************************************
 // clase punto
@@ -37,6 +38,8 @@ public:
     void 	draw_aristas(float r, float g, float b, int grosor);
     void    draw_solido(float r, float g, float b);
     void 	draw_solido_colores();
+    void    draw_solido_plano();
+    //void    draw_solido_suave();
     void 	draw(_modo modo, float r, float g, float b, float grosor);
     /* asignación de colores */
     void 	colors_random();
@@ -52,6 +55,11 @@ public:
 
     vector<_vertex3f> normales_caras;
     vector<_vertex3f> normales_vertices;
+
+    // material
+    _vertex4f ambiente_difuso;
+    _vertex4f especular;
+    float brillo;
 };
 
 
