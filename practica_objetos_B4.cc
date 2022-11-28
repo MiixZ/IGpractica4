@@ -25,8 +25,7 @@ GLfloat Observer_angle_y;
 GLfloat Size_x,Size_y,Front_plane,Back_plane;
 
 // variables que determninan la posicion y tamaño de la ventana X
-int Window_x=50,Window_y=50,Window_width=650,Window_high=650;
-
+int Window_x=50,Window_y=50,Window_width=650,Window_high=650, mov_camara = 0;
 
 // objetos
 _cubo cubo;
@@ -115,9 +114,9 @@ void draw_axis(){
 //**************************************************************************
 
 void draw_objects(){
-switch (t_objeto){
-	case CUBO: cubo.draw(modo,1.0,0.0,0.0,5);break;
-	case PIRAMIDE: piramide.draw(modo,1.0,0.0,0.0,5);break;
+    switch (t_objeto){
+        case CUBO: cubo.draw(modo,1.0,0.0,0.0,5);break;
+        case PIRAMIDE: piramide.draw(modo,1.0,0.0,0.0,5);break;
         case OBJETO_PLY: ply.draw(modo,1.0,0.6,0.0,5);break;
         case ROTACION: rotacion.draw(modo,1.0,0.0,0.0,5);break;
         case EXTRUSION: extrusion->draw(modo,1.0,0.0,0.0,5);break;
@@ -149,6 +148,7 @@ void luces(float alpha){
 
     glPushMatrix();
 
+    glRotatef(alpha, 0, 1, 0);
     glLightfv(GL_LIGHT1, GL_POSITION, luz_posicion);
 
     glPopMatrix();
@@ -164,13 +164,11 @@ void luces(float alpha){
 void draw(void){
     clean_window();
     change_observer();
-    luces(13);
+    luces(mov_camara);
     draw_axis();
     draw_objects();
     glutSwapBuffers();
 }
-
-
 
 //***************************************************************************
 // Función llamada cuando se produce un cambio en el tamaño de la ventana
@@ -223,7 +221,6 @@ void normal_key(unsigned char Tecla1,int x,int y){
         case 'B':t_objeto=PIRAMIDEXAMEN;break;
         case 'N':t_objeto=ESFERADOBLE;break;
         case 'M':t_objeto=MODELOJERARQUICO;break;
-        
         case 'V': 
             modelo.rota1+=5;
             break;
@@ -246,6 +243,10 @@ void normal_key(unsigned char Tecla1,int x,int y){
             else
                 coche.anima = true;
             break;
+
+        case ',': mov_camara+=5; break;
+        case '.': mov_camara-=5; break;
+
 	}
     glutPostRedisplay();
 }
@@ -333,7 +334,6 @@ switch (Tecla1){
         case GLUT_KEY_F11:coche.giro_antena-=5;
                 if (coche.giro_antena < -coche.GIRO_MAXIMO_ANTENA)
                     coche.giro_antena = -coche.GIRO_MAXIMO_ANTENA;break;
-
         case GLUT_KEY_F12:
             if(coche.luz_encendida)
                 coche.luz_encendida = false;
@@ -370,14 +370,12 @@ void initialize(void){
     glViewport(0,0,Window_width,Window_high);
 }
 
-
 //***************************************************************************
 // Programa principal
 //
 // Se encarga de iniciar la ventana, asignar las funciones e comenzar el
 // bucle de eventos
 //***************************************************************************
-
 
 int main(int argc, char *argv[] ){
     // Perfil 

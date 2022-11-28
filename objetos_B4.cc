@@ -34,7 +34,7 @@ void _puntos3D::draw_puntos(float r, float g, float b, int grosor)
 //*************************************************************************
 
 _triangulos3D::_triangulos3D(){
-    ambiente_difuso =_vertex4f(1.0, 0.8, 0.0, 1.0);
+    ambiente_difuso =_vertex4f(0.4, 0.8, 0.0, 1.0);
     especular=_vertex4f(0.0, 0.5, 0.5, 1.0);
     brillo = 10;
 }
@@ -378,7 +378,7 @@ _esfera::_esfera(float radio, int num1, int num2)
     vector <_vertex3f> perfil;
     _vertex3f vert_aux;
     
-    for(int i = 1; i < num1 ; i++){
+    for(int i = 1; i < num1; i++){
         vert_aux.x = radio*cos(M_PI*i/num1-M_PI/2.0);
         vert_aux.y = radio*sin(M_PI*i/num1-M_PI/2.0);
         vert_aux.z = 0.0;
@@ -509,7 +509,6 @@ _objeto_ply::_objeto_ply()
  
 }
 
-
 void _objeto_ply::parametros(char *archivo){                                           // OBJETO TECLA "o"     
     int n_ver,n_car;
 
@@ -543,39 +542,10 @@ void _objeto_ply::parametros(char *archivo){                                    
 // Calcular normales.
     calcular_normales_caras();
 
+    calcular_normales_vertices();
 // Colores
 
-    colors_lambert_c(0, 20, 20, 1.0, 0.8, 0);
-
-/*
-//colores caras
-    colores_caras.resize(n_car);
-    srand(10);
-    for(int i = 0; i < n_car; i++){
-        colores_caras[i].r = rand()%1000/1000.0;
-        colores_caras[i].g = rand()%1000/1000.0;
-        colores_caras[i].b = rand()%1000/1000.0;
-        
-        if(vertices[caras[i]._0].y >= 0){
-            colores_caras[i].r = rand()%1000/1000.0;
-            colores_caras[i].b = 0;
-            colores_caras[i].g = 0;
-        }
-        else{
-            int n = rand() % 10;
-            int sum = rand() % 100 / 500.0;
-            if(n < 5){ 
-                colores_caras[i].r = 0.255;
-                colores_caras[i].b = 0.5 + sum;
-                colores_caras[i].g = 0.5 - sum;
-            }
-            else{
-                colores_caras[i].r = 0.6;
-                colores_caras[i].b = rand()%1000/1000.0;
-                colores_caras[i].g = rand()%1000/1000.0;
-            }
-        }
-    }*/
+    colors_lambert_c(0, 20, 20, 0.2, 0.8, 0);
 }
 
 //************************************************************************
@@ -586,7 +556,6 @@ _rotacion::_rotacion()
 {
 
 }
-
 
 void _rotacion::parametros(vector<_vertex3f> perfil, int num, int tipo, int tapa_in, int tapa_su){
     int i,j;
@@ -666,7 +635,6 @@ void _rotacion::parametros(vector<_vertex3f> perfil, int num, int tipo, int tapa
      colors_lambert_c(0, 20, 20, 1.0, 0.8, 0);
 }
 
-
 //************************************************************************
 // objeto por extrusión
 //************************************************************************
@@ -725,10 +693,10 @@ _extrusion::_extrusion(vector<_vertex3f> poligono, float x, float y, float z)
 _rotacion_PLY::_rotacion_PLY(){}
 
 void _rotacion_PLY::parametros_PLY(char *archivo, int num){
-	int n_ver,n_car;
+	int n_ver, n_car;
 	vector<_vertex3f> perfil;
-	vector<float> ver_ply ;
-	vector<int>   car_ply ;
+	vector<float> ver_ply;
+	vector<int>   car_ply;
 	
 	_file_ply::read(archivo, ver_ply, car_ply );
 
@@ -738,7 +706,7 @@ void _rotacion_PLY::parametros_PLY(char *archivo, int num){
 
 	vertices.resize(n_ver);
 
-	//vertices
+	//vértices
 	for(int i=0; i < n_ver; i++){
 		vertices[i].x=ver_ply[3*i];
 		vertices[i].y=ver_ply[3*i+1];
@@ -746,15 +714,7 @@ void _rotacion_PLY::parametros_PLY(char *archivo, int num){
 		perfil.push_back(vertices[i]);
 	}
 
-	//Colores para los vertices
-	/*colores_vertices.resize(n_ver); //color entre 0 y 1
-	for(int i=0; i < 5; i++){
-		colores_vertices[i].r= rand()%1000/1000.0;
-		colores_vertices[i].g= rand()%1000/1000.0;
-		colores_vertices[i].b= rand()%1000/1000.0;
-	}*/
-
-    parametros(perfil, num, 0, 1, 1);
+    parametros(perfil, num, 0, 1, 0);
 }
 
 //************************************************************************
@@ -932,7 +892,6 @@ _excavadora::_excavadora()
     tamanio_pala=0.15;
 };
 
-
 void _excavadora::draw(_modo modo, float r, float g, float b, float grosor)
 {
     glPushMatrix();
@@ -959,7 +918,6 @@ void _excavadora::draw(_modo modo, float r, float g, float b, float grosor)
 
     glPopMatrix();
 };
-
 
 /////////////////////////////////////////////////////////////////
 //                          COCHE                              //
@@ -1270,6 +1228,7 @@ void _ModeloJerarquico::draw(_modo modo, float r, float g, float b, float grosor
     glPushMatrix();                         // NIVEL 1
     glScalef(ancho1, alto1, fondo1*2);
     nivel1.draw(modo, r, g, b, grosor);
+    nivel1.colors_lambert_c(0, 20, 20, 1, 1, 1);
     glPopMatrix();
 
     glPushMatrix();                                     // NIVEL 2.1
