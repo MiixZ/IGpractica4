@@ -119,7 +119,7 @@ void _triangulos3D::draw_solido_plano(){
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
     glBegin(GL_TRIANGLES);
     
-    for(i=0;i<caras.size();i++){
+    for(i=0; i<caras.size(); i++){
         glNormal3f(normales_caras[i].x, normales_caras[i].y, normales_caras[i].z);
         glVertex3fv((GLfloat *) &vertices[caras[i]._0]);
         glVertex3fv((GLfloat *) &vertices[caras[i]._1]);
@@ -967,7 +967,7 @@ _sustentacioncoche::_sustentacioncoche(){
 
 void _ruedas::draw(_modo modo, float r, float g, float b, float grosor,
                     float giro_ruedas, float giro_ruedas_delanteras, float giro_antena, bool luz_encendida){
-    
+
     glPushMatrix();                                         // Rueda alante izquierda. (Rueda)
     glTranslatef(2*ancho/5,0,fondo/2);                      // Posición    
     glRotatef(90,1,0,0);
@@ -982,7 +982,7 @@ void _ruedas::draw(_modo modo, float r, float g, float b, float grosor,
     glRotatef(90,1,0,0);
     glRotatef(giro_ruedas,0,1,0);
     glScalef(radio, fondo/2.2, radio);
-    rueda2.draw(modo, r, g, b, grosor);
+    rueda1.draw(modo, r, g, b, grosor);
     glPopMatrix();
 
     glPushMatrix();                                         // Rueda alante derecha. (Rueda)
@@ -991,7 +991,7 @@ void _ruedas::draw(_modo modo, float r, float g, float b, float grosor,
     glRotatef(giro_ruedas_delanteras,0,0,1);
     glRotatef(giro_ruedas,0,1,0);
     glScalef(radio, fondo/2.2, radio);                      // Tamaño
-    rueda3.draw(modo, r, g, b, grosor);
+    rueda1.draw(modo, r, g, b, grosor);
     glPopMatrix();
     
     glPushMatrix();                                         // Rueda atrás izquierda. (Rueda)
@@ -999,8 +999,12 @@ void _ruedas::draw(_modo modo, float r, float g, float b, float grosor,
     glRotatef(90,1,0,0);
     glRotatef(giro_ruedas,0,1,0);
     glScalef(radio, fondo/2.2, radio);
-    rueda4.draw(modo, r, g, b, grosor);
+    rueda1.draw(modo, r, g, b, grosor);
     glPopMatrix();
+
+    rueda1.ambiente_difuso = _vertex4f(0.5, 0.5, 0.5, 1.0);
+    rueda1.especular= _vertex4f(0.5, 0.5, 0.5, 1.0);
+    rueda1.brillo = 40;
 
 // CILINDROS CABINA
 
@@ -1033,7 +1037,10 @@ void _ruedas::draw(_modo modo, float r, float g, float b, float grosor,
     glScalef(radio/2, ancho, radio/2);
     techo.draw(modo, r, g, b, grosor);
     glPopMatrix();
-
+    
+    techo.ambiente_difuso = _vertex4f(0.8, 0.2, 0.1, 1.0);
+    techo.especular= _vertex4f(0.0, 0.5, 0.5, 1.0);
+    techo.brillo = 40;
 
 // LUCES
 
@@ -1041,14 +1048,20 @@ void _ruedas::draw(_modo modo, float r, float g, float b, float grosor,
     glTranslatef(ancho/2+0.2,alto-1,-fondo/4);
     glRotatef(90,0,0,1);
     glScalef(radio/4, 0.1, radio/4);
-    if(luz_encendida)
+    if(luz_encendida){
         luz.colors_chess(1,1,1,1,1,1);
-    else
+        luz.ambiente_difuso = _vertex4f(1.0, 1.0, 1.0, 1.0); 
+        luz.especular = _vertex4f(1.0, 1.0, 1.0, 1.0); 
+        luz.brillo = 100;
+    }
+    else{
         luz.colors_chess(0,0,0,0,0,0);
+        luz.ambiente_difuso = _vertex4f(0.0, 0.0, 0.0, 1.0); 
+        luz.especular = _vertex4f(0.0, 0.0, 0.0, 1.0); 
+        luz.brillo = 0;
+    }
     luz.draw(modo, r, g, b, grosor);
     glPopMatrix();
-
-
 
     glPushMatrix();                                         // Luz derecha.
     glTranslatef(ancho/2+0.2,alto-1,fondo/4);
@@ -1057,28 +1070,41 @@ void _ruedas::draw(_modo modo, float r, float g, float b, float grosor,
     luz.draw(modo, r, g, b, grosor);
     glPopMatrix();
 
-
-
     glPushMatrix();                                         // Luz trasera izquierda.
     glTranslatef(-ancho/2 - 0.42,alto-1.5,-fondo/2 - 0.3);
     glRotatef(90,0,0,1);
     glScalef(radio/2, 0.1, radio/4);
-    if(luz_encendida or giro_ruedas_delanteras < -20)
+    if(luz_encendida or giro_ruedas_delanteras < -20){
         luz_trasera_izquierda.colors_chess(1,0.5,0,1,0.5,0);
-    else
+        luz_trasera_izquierda.ambiente_difuso = _vertex4f(1.0, 0.5, 0.0, 1.0); 
+        luz_trasera_izquierda.especular = _vertex4f(1.0, 0.5, 0.0, 1.0); 
+        luz_trasera_izquierda.brillo = 65;
+    }
+    else{
         luz_trasera_izquierda.colors_chess(1,0,0,1,0.1,0.1);
+        luz_trasera_izquierda.ambiente_difuso = _vertex4f(1.0, 0.0, 0.0, 1.0); 
+        luz_trasera_izquierda.especular = _vertex4f(1.0, 0.5, 0.5, 1.0); 
+        luz_trasera_izquierda.brillo = 65;
+    }
     luz_trasera_izquierda.draw(modo, r, g, b, grosor);
     glPopMatrix();
-
 
     glPushMatrix();                                         // Luz trasera derecha.
     glTranslatef(-ancho/2 - 0.42,alto-1.5,fondo/2 + 0.3);
     glRotatef(90,0,0,1);
     glScalef(radio/2, 0.1, radio/4);
-    if(luz_encendida or giro_ruedas_delanteras > 20)
+    if(luz_encendida or giro_ruedas_delanteras > 20){
         luz_trasera_derecha.colors_chess(1,0.5,0,1,0.5,0);
-    else
+        luz_trasera_derecha.ambiente_difuso = _vertex4f(1.0, 0.5, 0.0, 1.0); 
+        luz_trasera_derecha.especular = _vertex4f(0.0, 0.5, 0.5, 1.0); 
+        luz_trasera_derecha.brillo = 65;
+    }
+    else{
         luz_trasera_derecha.colors_chess(1,0,0,1,0.1,0.1);
+        luz_trasera_derecha.ambiente_difuso = _vertex4f(1.0, 0.0, 0.0, 1.0); 
+        luz_trasera_derecha.especular = _vertex4f(0.5, 0.5, 0.5, 1.0); 
+        luz_trasera_derecha.brillo = 65;
+    }
     luz_trasera_derecha.draw(modo, r, g, b, grosor);
     glPopMatrix();
 
@@ -1106,23 +1132,26 @@ void _sustentacioncoche::draw(_modo modo, float r, float g, float b, float groso
     glPopMatrix();
 
     glPushMatrix();                                         // Cabina
-    glTranslatef(-2*ancho/7,alto,0);
+    glTranslatef(-2*ancho/7, alto,0);
     glScalef(ancho, 0.6, fondo);
     base.draw(modo, r, g, b, grosor);
     glPopMatrix();
 
     glPushMatrix();                                         // Cabina
-    glTranslatef(-2*ancho/7,0,-fondo + 0.7);
+    glTranslatef(-2*ancho/7,0, -fondo + 0.7);
     glScalef(ancho, alto, -0.6);
     base.draw(modo, r, g, b, grosor);
     glPopMatrix();
 
     glPushMatrix();                                         // Cabina
-    glTranslatef(-2*ancho/7,0,fondo - 0.7);
+    glTranslatef(-2*ancho/7,0, fondo - 0.7);
     glScalef(ancho, alto, 0.6);
     base.draw(modo, r, g, b, grosor);
     glPopMatrix();
 
+    base.ambiente_difuso = _vertex4f(0.8, 0.3, 0.2, 1.0);
+    base.especular= _vertex4f(0.0, 0.5, 0.5, 1.0);
+    base.brillo = 40;
 
 //VENTANILLAS
 
@@ -1146,6 +1175,10 @@ void _sustentacioncoche::draw(_modo modo, float r, float g, float b, float groso
     glScalef(0.05, alto/2, ancho/6);
     ventanilla.draw(modo, r, g, b, grosor);
     glPopMatrix();
+
+    ventanilla.ambiente_difuso = _vertex4f(0.0, 0.5, 0.8, 1.0);
+    ventanilla.especular= _vertex4f(0.5, 0.0, 0.5, 1.0);
+    ventanilla.brillo = 40;
 
 //CAPÓ
 
@@ -1195,6 +1228,10 @@ void _sustentacioncoche::draw(_modo modo, float r, float g, float b, float groso
     glScalef(0.05, alto - 0.6, fondo/1.5);
     puerta.draw(modo, r, g, b, grosor);
     glPopMatrix();
+
+    puerta.ambiente_difuso = _vertex4f(0.5, 0.5, 0.0, 1.0);
+    puerta.especular= _vertex4f(0.5, 0.1, 0.1, 1.0);
+    puerta.brillo = 40;
 }
 
 void _coche::draw(_modo modo, float r, float g, float b, float grosor){

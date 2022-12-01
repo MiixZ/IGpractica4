@@ -26,6 +26,7 @@ GLfloat Size_x,Size_y,Front_plane,Back_plane;
 
 // variables que determninan la posicion y tamaño de la ventana X
 int Window_x=50,Window_y=50,Window_width=650,Window_high=650, mov_camara = 0;
+bool luz_2 = false;
 
 // objetos
 _cubo cubo;
@@ -54,7 +55,6 @@ void clean_window(){
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
-
 
 //**************************************************************************
 // Función para definir la transformación de proyección
@@ -108,7 +108,6 @@ void draw_axis(){
     glEnd();
 }
 
-
 //**************************************************************************
 // Función que dibuja los objetos
 //**************************************************************************
@@ -137,24 +136,34 @@ void draw_objects(){
 //***************************************************************************
 
 void luces(float alpha){
-    GLfloat luz_ambinete[]  = {0.2, 0.2, 0.2, 1.0},
+    GLfloat luz_ambiente[]  = {0.2, 0.2, 0.2, 1.0},
             luz_difusa[]  = {1.0, 1.0, 1.0, 1.0},
             luz_especular[] = {1.0, 0.0, 1.0, 1.0},
-            luz_posicion[] = {0.0, 20.0, 20.0, 1.0};
+            luz_posicion[] = {0.0, 20.0, 20.0, 1.0},
+            luz_ambiente2[]  = {0.6, 0.6, 0.6, 1.0},
+            luz_difusa2[]  = {0.5, 0.5, 0.5, 1.0},
+            luz_especular2[] = {0.2, 1, 0.2, 1.0};
 
-    glLightfv(GL_LIGHT1, GL_AMBIENT, luz_ambinete);
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, luz_difusa);
-    glLightfv(GL_LIGHT1, GL_SPECULAR, luz_especular);
+    if(!luz_2){
+        glLightfv(GL_LIGHT1, GL_AMBIENT, luz_ambiente);
+        glLightfv(GL_LIGHT1, GL_DIFFUSE, luz_difusa);
+        glLightfv(GL_LIGHT1, GL_SPECULAR, luz_especular);
+    }
+    else{
+        glLightfv(GL_LIGHT1, GL_AMBIENT, luz_ambiente2);
+        glLightfv(GL_LIGHT1, GL_DIFFUSE, luz_difusa2);
+        glLightfv(GL_LIGHT1, GL_SPECULAR, luz_especular2);
 
-    glPushMatrix();
+        glPushMatrix();
 
-    glRotatef(alpha, 0, 1, 0);
-    glLightfv(GL_LIGHT1, GL_POSITION, luz_posicion);
+        glRotatef(alpha, 0, 1, 0);
+        glLightfv(GL_LIGHT1, GL_POSITION, luz_posicion);
 
-    glPopMatrix();
+        glPopMatrix();
+    }
 
-    glEnable(GL_LIGHT1);
-    glDisable(GL_LIGHT0);
+        glEnable(GL_LIGHT1);
+        glDisable(GL_LIGHT0);
 } 
 
 //**************************************************************************
@@ -246,6 +255,7 @@ void normal_key(unsigned char Tecla1,int x,int y){
 
         case ',': mov_camara+=5; break;
         case '.': mov_camara-=5; break;
+        case '-': if(!luz_2) luz_2 = true; else luz_2 = false; break;
 
 	}
     glutPostRedisplay();
